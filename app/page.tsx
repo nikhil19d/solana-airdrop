@@ -1,101 +1,118 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+import { useState } from 'react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useToast } from "@/hooks/use-toast"
+import { Code } from 'lucide-react'
+import { PublicKey } from '@solana/web3.js'
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+export default function SolanaAirdrop() {
+  // const [publicKey, setPublicKey] = useState('')
+  // const [isLoading, setIsLoading] = useState(false)
+  const { toast } = useToast()
+    interface dataType {
+      publicKey:string,
+      quantity:string,
+      isLoading:boolean
+    }
+    const [data, setData] = useState<dataType>({
+      publicKey: "",
+      quantity: "",
+      isLoading: false
+    })
+    const handleOnChange = ( e : React.ChangeEvent<HTMLInputElement> ) => {
+      const { name, value } = e.target
+      setData((prevState)=>({
+        ...prevState,
+        [name]:value
+      }))
+    }
+    const handleOnValueChange = ( value : string ) => {
+      setData((prevState)=>({
+        ...prevState,
+        quantity:value
+      }))
+    }
+    
+    const handleAirdrop = async ( e : React.FormEvent<HTMLElement> ) => {
+      e.preventDefault()
+      try{
+new PublicKey(data.publicKey)
+setData((prevState)=>({...prevState,isLoading:true}))
+await fetch('/api', 
+      {
+        method:"POST",
+        body:JSON.stringify(data)
+      })
+      .then((res) => {
+        return res.json()
+      })
+      .then(data=>console.log(data.msg))
+      .catch((err)=>console.log(err))
+}catch(err){
+toast({
+title: "Airdrop Failed",
+description: `Provided incorrect Public Key`,
+variant: "destructive"
+})
+console.log(`enter correct public key`)}console.log(data)
+    setData({
+      publicKey:"",
+      quantity:"",
+      isLoading:false
+      })
+    }
+    return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-gray-100 p-4">
+      <div className="w-full max-w-md">
+        <div className="flex items-center justify-center space-x-2 mb-8">
+          <Code className="w-8 h-8 text-yellow-400" />
+          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
+            Solana Airdrop
+          </h1>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <p className="text-sm text-gray-400 mb-4 italic">Note: You can only make one airdrop request per minute.</p>
+        <form onSubmit={handleAirdrop} className="space-y-6 bg-gray-80 p-6 rounded-lg shadow-xl">
+          <div className="space-y-2">
+            <Label htmlFor="publicKey" className="text-sm font-medium text-gray-300">Public Key</Label>
+            <Input
+              id="publicKey"
+              type="text"
+              name="publicKey"
+              placeholder="Enter Solan a public key"
+              onChange={handleOnChange}
+              value={data.publicKey}
+              required
+              className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-yellow-400 focus:border-yellow-400"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="quantity" className="text-sm font-medium text-gray-300">Quantity (SOL)</Label>
+            <Select value={data.quantity} onValueChange={handleOnValueChange}>
+              <SelectTrigger className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-yellow-400 focus:border-yellow-400">
+                <SelectValue placeholder="Select quantity" />
+              </SelectTrigger>
+              <SelectContent className="bg-gray-700 border-gray-600 text-gray-100">
+                <SelectItem value="0.5">0.5</SelectItem>
+                <SelectItem value="1">1</SelectItem>
+                <SelectItem value="1.5">1.5</SelectItem>
+                <SelectItem value="2">2</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button 
+            type="submit" 
+            className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105" 
+            disabled={data.isLoading}
+          >Airdrop SOL
+            {data.isLoading ? 'Processing...' : 'Airdrop SOL'}
+          </Button>
+        </form>
+      </div>
     </div>
-  );
+  )
 }
+
