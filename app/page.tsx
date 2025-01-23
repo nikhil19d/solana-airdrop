@@ -152,7 +152,7 @@ export default function SolanaAirdrop() {
                   <CheckCircle className="w-5 h-5 mx-2" />
                   <p className='text-sm'>{statusMessage.msg}</p>
                 </div>
-                <Link className='text-sm flex justify-center' href={`https://explorer.solana.com/address/${statusMessage.msg}?cluster=devnet`}>Click here to view transaction details</Link>
+                <Link className='text-sm flex justify-center' href={`https://explorer.solana.com/tx/${statusMessage.msg}?cluster=devnet`}>Click here to view transaction details</Link>
               </div> ) : (
               <div className='flex justify-evenly'>
 <XCircle className="w-5 h-5 mx-2" />
