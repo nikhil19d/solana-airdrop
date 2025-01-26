@@ -4,7 +4,7 @@ export const POST = async ( req : NextRequest ) =>{
   try {
     const body = await req.json()
     const { publicKey, quantity } = body
-    const solanaConnection = new Connection(process.env.URL ?? "")
+    const solanaConnection = new Connection(process.env.URL ?? "","processed")
     const address = new PublicKey(publicKey)
     const airdropSign = solanaConnection.requestAirdrop(address, parseFloat(quantity)*LAMPORTS_PER_SOL)
     try {
