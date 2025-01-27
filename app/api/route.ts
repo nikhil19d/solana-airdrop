@@ -6,9 +6,8 @@ export const POST = async ( req : NextRequest ) =>{
     const { publicKey, quantity } = body
     const solanaConnection = new Connection(process.env.URL ?? "","processed")
     const address = new PublicKey(publicKey)
-    const airdropSign = solanaConnection.requestAirdrop(address, parseFloat(quantity)*LAMPORTS_PER_SOL)
     try {
-      const txid = await airdropSign
+      const txid = await solanaConnection.requestAirdrop(address, parseFloat(quantity)*LAMPORTS_PER_SOL)
       return NextResponse.json({res: 'success', msg : txid})
     } catch {
       return NextResponse.json({res: 'fail',msg: 'Transaction limit exceeded please try again after some time'})
